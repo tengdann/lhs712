@@ -16,6 +16,11 @@ def date_normalizer(row):
     # Assume all dates where year is encoded in only two digits are years from the 1900's (e.g. 1/5/89 is January 5th, 1989)
     # If the day is missing (e.g. 9/2009), assume it is the first day of the month (e.g. September 1, 2009).
     # If the month is missing (e.g. 2010), assume it is the first of January of that year (e.g. January 1, 2010).
+
+    pat1 = re.compile('\d{,2}')
+    pat2 = 
+    pat3 = 
+    pat4 = 
     pass
 
 raw_table['Date'] = raw_table.apply(date_normalizer, axis = 1)
