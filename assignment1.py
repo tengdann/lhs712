@@ -21,37 +21,40 @@ def date_parser(row):
     # If the day is missing (e.g. 9/2009), assume it is the first day of the month (e.g. September 1, 2009).
     # If the month is missing (e.g. 2010), assume it is the first of January of that year (e.g. January 1, 2010).
 
-    pat1 = r'(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})'
-    pat2 = r'(\d{1,2})[/-](\d{2,4})'
-    pat3 = r'(\d{1,2})\s?(%s[a-z]*)\s?(?:\d{1,2})?,? (\d{2,4})' % MONTHS
+    pat1 = r'(\d{1,2})[/-](\d{1,2})[/-](\d{2}|\d{4})'
+    pat2 = r'(\d{1,2})[/-](\d{2}|\d{4})'
+    pat3 = r'(\d{1,2})\s?(%s[a-z]*)\s?(?:\d{1,2})?,? (\d{2}|\d{4})' % MONTHS
     pat4 = r'(\d{4})'
 
-    if len(re.findall(pat1, row['Text'])) != 0:
-        raw_pat = re.findall(pat1, row['Text'])
-        month = raw_pat[0][0]
-        day = raw_pat[0][1]
-        year = raw_pat[0][2]
+    if re.search(pat1, row['Text']):
+        raw_pat = re.search(pat1, row['Text'])
+        month = raw_pat.group(1)
+        day = raw_pat.group(2)
+        year = raw_pat.group(3)
         
         return date_normalizer(year, month, day)
-    elif len(re.findall(pat2, row['Text'])) != 0:
-        raw_pat = re.findall(pat2, row['Text'])
-        month = raw_pat[0][0]
-        year = raw_pat[0][1]
+    elif re.search(pat2, row['Text']):
+        raw_pat = re.search(pat2, row['Text'])
+        month = raw_pat.group(1)
+        year = raw_pat.group(2)
 
         return date_normalizer(year, month)
-    elif len(re.findall(pat3, row['Text'])) != 0:
-        raw_pat = re.findall(pat3, row['Text'])
-        day = raw_pat[0][0]
-        month = raw_pat[0][1]
-        year = raw_pat[0][2]
-        
+    elif re.search(pat3, row['Text']):
+        raw_pat = re.search(pat3, row['Text'])
+        day = raw_pat.group(1)
+        month = raw_pat.group(2)
+        year = raw_pat.group(3)
+
         return date_normalizer(year, month, day)
-    elif len(re.findall(pat4, row['Text'])) != 0:
-        raw_pat = re.findall(pat4, row['Text'])
-        year = raw_pat[0]
+    elif re.search(pat4, row['Text']):
+        raw_pat = re.search(pat4, row['Text'])
+        year = raw_pat.group(1)
+
+        print(year)
 
         return date_normalizer(year)
     else:
+        print('DEBUG NO DATE FOUND')
         return 'No date found?'
 
 # REQUIRES: valid string for year
