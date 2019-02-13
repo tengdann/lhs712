@@ -83,7 +83,7 @@
 83	sApproximately 7 psychiatric hospitalizations starting Humana Hospital-Augusta (Alabama) at age 12, most recently 1-month residential program at Jefferson County Health Department in August 1979 but left AMA
 84	: 3/18/80Total time of visit (in minutes):
 85	: 8/06/83CPT Code: 90791: No medical services
-86	"The patient who voices no SI/Hi and no idea, plan or intent re:harm to self or others and fully agrees to outpatient safety plan saw her outpatient psychiatrist last week who restarted Venlafaxine (n.b.: pt had stopped Lithium and Venlafaxine frm 1/2002 until then and is now also taking Concertta daily), will see him twice weekly in the near term, and spoke to S. Oleary, M.D., her previousl ECT treating psychaitrist at JDH who referred her back to the JDH ECT Service and this consultaion.Suicidal Behavior Hx of Suicidal Behavior: Yes
+86	: "The patient who voices no SI/Hi and no idea, plan or intent re:harm to self or others and fully agrees to outpatient safety plan saw her outpatient psychiatrist last week who restarted Venlafaxine (n.b.: pt had stopped Lithium and Venlafaxine frm 1/2002 until then and is now also taking Concertta daily), will see him twice weekly in the near term, and spoke to S. Oleary, M.D., her previousl ECT treating psychaitrist at JDH who referred her back to the JDH ECT Service and this consultaion.Suicidal Behavior Hx of Suicidal Behavior: Yes
 87	: 6/03/96CPT Code: 90791: No medical services
 88	: 6/18/85Primary Care Doctor:
 89	: 5/18/75 [report_end]

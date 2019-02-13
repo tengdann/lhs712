@@ -8,8 +8,10 @@ MONTH_DICT = {'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', '
               'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'}
 
 raw_table = pd.read_csv('dates.txt', sep = '\t', header = None)
+print(len(raw_table))
 raw_table.rename({0: 'Row', 1: 'Text'}, axis = 'columns', inplace = True)
 raw_table.set_index(['Row'], inplace = True)
+print(len(raw_table))
 
 # REQUIRES: a row from pandas dataframe that contains a valid text.
 # MODIFIES: nothing
@@ -26,31 +28,36 @@ def date_parser(row):
     pat3 = r'(\d{1,2})\s?(%s[a-z]*)\s?(?:\d{1,2})?,? (\d{2}|\d{4})' % MONTHS
     pat4 = r'(\d{4})'
 
-    if re.search(pat1, row['Text']):
+    if re.search(pat1, str(row['Text'])):
         raw_pat = re.search(pat1, row['Text'])
         month = raw_pat.group(1)
         day = raw_pat.group(2)
         year = raw_pat.group(3)
         
         return date_normalizer(year, month, day)
-    elif re.search(pat2, row['Text']):
+    elif re.search(pat2, str(row['Text'])):
         raw_pat = re.search(pat2, row['Text'])
         month = raw_pat.group(1)
         year = raw_pat.group(2)
 
         return date_normalizer(year, month)
-    elif re.search(pat3, row['Text']):
+    elif re.search(pat3, str(row['Text'])):
         raw_pat = re.search(pat3, row['Text'])
-        day = raw_pat.group(1)
-        month = raw_pat.group(2)
+
+        # Checks if search returns leading day or leading month
+        if raw_pat.group(1).isdigit():
+            day = raw_pat.group(1)
+            month = raw_pat.group(2)
+        else:
+            day = raw_pat.group(2)
+            month = raw_pat.group(1)
+
         year = raw_pat.group(3)
 
         return date_normalizer(year, month, day)
-    elif re.search(pat4, row['Text']):
+    elif re.search(pat4, str(row['Text'])):
         raw_pat = re.search(pat4, row['Text'])
         year = raw_pat.group(1)
-
-        print(year)
 
         return date_normalizer(year)
     else:
