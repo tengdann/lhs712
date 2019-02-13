@@ -21,9 +21,9 @@ def date_parser(row):
     # If the day is missing (e.g. 9/2009), assume it is the first day of the month (e.g. September 1, 2009).
     # If the month is missing (e.g. 2010), assume it is the first of January of that year (e.g. January 1, 2010).
 
-    pat1 = r'(\d{1,2})[/-](\d{1,2})[/-](\d{2}|\d{4})'
-    pat2 = r'(\d{1,2})[/-](\d{2}|\d{4})'
-    pat3 = r'(\d{1,2})\s?(%s[a-z]*)\s?(?:\d{1,2})?,? (\d{2}|\d{4})' % MONTHS
+    pat1 = r'(\d{1,2})[/-](\d{1,2})[/-](\d{4}|\d{2})'
+    pat2 = r'(\d{1,2})[/-](\d{4}|\d{2})'
+    pat3 = r'(\d{1,2})\s?(%s[a-z]*)\s?(?:\d{1,2})?,? (\d{4}|\d{2})' % MONTHS
     pat4 = r'(\d{4})'
 
     if re.search(pat1, str(row['Text'])):
