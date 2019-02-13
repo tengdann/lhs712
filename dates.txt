@@ -461,7 +461,7 @@
 461	: Dec 1991Primary Care Doctor:
 462	: 3/09/1979Total time of visit (in minutes):
 463	: 7/31/96
-464	"Tapered off Xanax in 2/1974
+464	: "Tapered off Xanax in 2/1974
 465	: 8/31/77Total time of visit (in minutes):
 466	: 06/12/95CPT Code: 90791: No medical services
 467	: normal vaginal delivery (9/30/76)Problems Family history : Family History Mother: 45 alive DIABETES, not overwgt on oral agents Father: 60 alive HEALTHY Sibling 1: alive 1 BROTHER, HEALTHY Sibling 2: alive 1 SISTER, HEALTHY Other relative: alive HUSBAND HAS A STOMACH PROBLEM; HUSBAND'S PARENTS & 6 SIBLINGS ARE HEALTHY. pat gma and gpa died mva; mat gma 90, mat gpa died ? cause

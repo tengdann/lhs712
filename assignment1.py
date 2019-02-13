@@ -23,8 +23,10 @@ def date_parser(row):
 
     pat1 = r'(\d{1,2})[/-](\d{1,2})[/-](\d{4}|\d{2})'
     pat2 = r'(\d{1,2})[/-](\d{4}|\d{2})'
-    pat3 = r'(\d{1,2})\s?(%s[a-z]*)\s?(?:\d{1,2})?,? (\d{4}|\d{2})' % MONTHS
-    pat4 = r'(\d{4})'
+    pat3 = r'(\d{1,2}) (%s[a-z]*),? (\d{4}|\d{2})' % MONTHS
+    pat4 = r'(%s[a-z]*) (\d{1,2})?,? (\d{4}|\d{2})' % MONTHS
+    pat5 = r'(%s[a-z]*) (\d{4}|\d{2})' % MONTHS
+    pat6 = r'(\d{4})'
 
     if re.search(pat1, str(row['Text'])):
         raw_pat = re.search(pat1, row['Text'])
@@ -42,19 +44,28 @@ def date_parser(row):
     elif re.search(pat3, str(row['Text'])):
         raw_pat = re.search(pat3, row['Text'])
 
-        # Checks if search returns leading day or leading month
-        if raw_pat.group(1).isdigit():
-            day = raw_pat.group(1)
-            month = raw_pat.group(2)
-        else:
-            day = raw_pat.group(2)
-            month = raw_pat.group(1)
-
+        day = raw_pat.group(1)
+        month = raw_pat.group(2)
         year = raw_pat.group(3)
 
         return date_normalizer(year, month, day)
     elif re.search(pat4, str(row['Text'])):
         raw_pat = re.search(pat4, row['Text'])
+
+        month = raw_pat.group(1)
+        day = raw_pat.group(2)
+        year = raw_pat.group(3)
+
+        return date_normalizer(year, month, day)
+    elif re.search(pat5, str(row['Text'])):
+        raw_pat = re.search(pat5, row['Text'])
+
+        month = raw_pat.group(1)
+        year = raw_pat.group(2)
+
+        return date_normalizer(year, month)
+    elif re.search(pat6, str(row['Text'])):
+        raw_pat = re.search(pat6, row['Text'])
         year = raw_pat.group(1)
 
         return date_normalizer(year)
