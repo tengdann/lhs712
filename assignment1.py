@@ -8,10 +8,8 @@ MONTH_DICT = {'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', '
               'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'}
 
 raw_table = pd.read_csv('dates.txt', sep = '\t', header = None)
-print(len(raw_table))
 raw_table.rename({0: 'Row', 1: 'Text'}, axis = 'columns', inplace = True)
 raw_table.set_index(['Row'], inplace = True)
-print(len(raw_table))
 
 # REQUIRES: a row from pandas dataframe that contains a valid text.
 # MODIFIES: nothing
