@@ -28,20 +28,20 @@ def date_parser(row):
     pat5 = r'(%s[a-z]*) (\d{4}|\d{2})' % MONTHS
     pat6 = r'(\d{4})'
 
-    if re.search(pat1, str(row['Text'])):
+    if re.search(pat1, row['Text']):
         raw_pat = re.search(pat1, row['Text'])
         month = raw_pat.group(1)
         day = raw_pat.group(2)
         year = raw_pat.group(3)
         
         return date_normalizer(year, month, day)
-    elif re.search(pat2, str(row['Text'])):
+    elif re.search(pat2, row['Text']):
         raw_pat = re.search(pat2, row['Text'])
         month = raw_pat.group(1)
         year = raw_pat.group(2)
 
         return date_normalizer(year, month)
-    elif re.search(pat3, str(row['Text'])):
+    elif re.search(pat3, row['Text']):
         raw_pat = re.search(pat3, row['Text'])
 
         day = raw_pat.group(1)
@@ -49,7 +49,7 @@ def date_parser(row):
         year = raw_pat.group(3)
 
         return date_normalizer(year, month, day)
-    elif re.search(pat4, str(row['Text'])):
+    elif re.search(pat4, row['Text']):
         raw_pat = re.search(pat4, row['Text'])
 
         month = raw_pat.group(1)
@@ -57,14 +57,14 @@ def date_parser(row):
         year = raw_pat.group(3)
 
         return date_normalizer(year, month, day)
-    elif re.search(pat5, str(row['Text'])):
+    elif re.search(pat5, row['Text']):
         raw_pat = re.search(pat5, row['Text'])
 
         month = raw_pat.group(1)
         year = raw_pat.group(2)
 
         return date_normalizer(year, month)
-    elif re.search(pat6, str(row['Text'])):
+    elif re.search(pat6, row['Text']):
         raw_pat = re.search(pat6, row['Text'])
         year = raw_pat.group(1)
 
