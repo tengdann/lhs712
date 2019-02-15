@@ -25,7 +25,7 @@ def date_parser(row):
     pat2 = r'(\d{1,2})[/-](\d{4}|\d{2})'
     pat3 = r'(\d{1,2}) (%s[a-z]*),? (\d{4}|\d{2})' % MONTHS
     pat4 = r'(%s[a-z]*) (\d{1,2})?,? (\d{4}|\d{2})' % MONTHS
-    pat5 = r'(%s[a-z]*) (\d{4}|\d{2})' % MONTHS
+    pat5 = r'(%s[a-z]*),? (\d{4}|\d{2})' % MONTHS
     pat6 = r'(\d{4})'
 
     if re.search(pat1, row['Text']):
