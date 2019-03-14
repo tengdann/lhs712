@@ -61,7 +61,7 @@ df.Labels_SVM = [train_data.target_names[i] for i in predictedSVM]
 params_gsnb = {
     'vect__ngram_range': [(1, 1), (1, 2)],
     'tfidf__use_idf': (True, False),
-    'clf__alpha': (1e-2, 1e-3),
+    'clf__alpha': (1, 1e-2, 1e-4, 1e-6, 1e-8, 1e-10),
 }
 
 gs_clfnb = GridSearchCV(clfrNB, params_gsnb,cv = 5, n_jobs = -1)
@@ -77,14 +77,14 @@ tuned_parameters = [
         'tfidf__use_idf': (True, False),
         'clf__kernel': ['rbf'],
         'clf__gamma': [1e-3, 1e-4, 1e-2, 0.1, 1],
-        'clf__C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+        'clf__C': [0.001, 0.01, 0.1, 1]
     },
     {
         'vect__ngram_range' : [(1, 1), (1, 2)],
         'tfidf__use_idf': (True, False),
         'clf__kernel': ['linear'],
         'clf__gamma': [1e-3, 1e-4, 1e-2, 0.1, 1],
-        'clf__C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+        'clf__C': [0.001, 0.01, 0.1, 1]
     }
 ]
 gs_clfrSVM = Pipeline(
