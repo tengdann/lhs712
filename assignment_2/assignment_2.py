@@ -7,12 +7,6 @@ from sklearn.datasets import load_files
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline
 
-parameters = {
-    'vect__ngram_range': [(1, 1), (1, 2)],
-    'tfidf__use_idf': (True, False),
-    'clf__alpha': (1e-2, 1e-3),
-}
-
 # Create dataframe for model output
 # curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
 curdir = r'C:\Users\mrasianman3\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
@@ -64,12 +58,49 @@ df.Labels_SVM = [train_data.target_names[i] for i in predictedSVM]
 # print(df.head())
 
 # Model selection?
-gs_clf = GridSearchCV(clfrNB, parameters,cv = 5, n_jobs = -1)
-gs_clf = gs_clf.fit(train_data.data, train_data.target)
-predicted_labels = gs_clf.predict(test_data.data)
-df.Labels_GSNB = [train_data.target_names[i] for i in predicted_labels]
+params_gsnb = {
+    'vect__ngram_range': [(1, 1), (1, 2)],
+    'tfidf__use_idf': (True, False),
+    'clf__alpha': (1e-2, 1e-3),
+}
+
+gs_clfnb = GridSearchCV(clfrNB, params_gsnb,cv = 5, n_jobs = -1)
+gs_clfnb = gs_clfnb.fit(train_data.data, train_data.target)
+predictedGSNB = gs_clfnb.predict(test_data.data)
+df.Labels_GSNB = [train_data.target_names[i] for i in predictedGSNB]
 # print(df.head())
+
+# More model selection?
+tuned_parameters = [
+    {
+        'vect__ngram_range' : [(1, 1), (1, 2)],
+        'tfidf__use_idf': (True, False),
+        'clf__kernel': ['rbf'],
+        'clf__gamma': [1e-3, 1e-4, 1e-2, 0.1, 1],
+        'clf__C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+    },
+    {
+        'vect__ngram_range' : [(1, 1), (1, 2)],
+        'tfidf__use_idf': (True, False),
+        'clf__kernel': ['linear'],
+        'clf__gamma': [1e-3, 1e-4, 1e-2, 0.1, 1],
+        'clf__C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+    }
+]
+gs_clfrSVM = Pipeline(
+    [
+        ('vect', CountVectorizer(decode_error = 'ignore')),
+        ('tfidf', TfidfTransformer(use_idf = False)),
+        ('clf', svm.SVC())
+    ]
+)
+gs_clfsvm = GridSearchCV(gs_clfrSVM, tuned_parameters, cv = 5, n_jobs = -1)
+gs_clfsvm = gs_clfsvm.fit(train_data.data, train_data.target)
+predictedGSSVM = gs_clfsvm.predict(test_data.data)
+df.Labels_GSSVM = [train_data.target_names[i] for i in predictedGSSVM]
+print(df.head())
 
 df.to_csv('./assignment_2/predictions_NB.csv', columns = ['Filename', 'Labels_NB'], header = ['Filename', 'Label'],index = False)
 df.to_csv('./assignment_2/predictions_SVM.csv', columns = ['Filename', 'Labels_SVM'], header = ['Filename', 'Label'],index = False)
 df.to_csv('./assignment_2/predictions_GSNB.csv', columns = ['Filename', 'Labels_GSNB'], header = ['Filename', 'Label'],index = False)
+df.to_csv('./assignment_2/predictions_GSSVM.csv', columns = ['Filename', 'Labels_GSSVM'], header = ['Filename', 'Label'],index = False)
