@@ -83,7 +83,7 @@ if cont == 'y':
         'clf__alpha': (1, 1e-2, 1e-4, 1e-6, 1e-8, 1e-10),
     }
 
-    gs_clfnb = GridSearchCV(clfrNB, params_gsnb,cv = 5, n_jobs = -1)
+    gs_clfnb = GridSearchCV(clfrNB, params_gsnb, cv = 5, n_jobs = -1)
     gs_clfnb = gs_clfnb.fit(train_data.data, train_data.target)
     predictedGSNB = gs_clfnb.predict(test_data.data)
     df['Labels_GSNB'] = [train_data.target_names[i] for i in predictedGSNB]
