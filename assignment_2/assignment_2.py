@@ -14,27 +14,28 @@ parameters = {
 }
 
 # Create dataframe for model output
-curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
+# curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
+curdir = r'C:\Users\mrasianman3\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
 files = list()
 for file in os.listdir(curdir):
     files.append(file)
 
 df = pd.DataFrame(data = files, columns = ['Filename'])
-df['Labels_NB'], df['Labels_SVM'], df['Labels_Models'] = '', '', ''
+df['Labels_NB'], df['Labels_SVM'], df['Labels_GSNB'], df['Labels_GSSVM'] = '', '', '', ''
 
 # Preprocessing steps
 train_data = load_files('assignment_2/dataset/train-data', load_content = True, shuffle = True, random_state = 42)
 test_data = load_files('assignment_2/dataset/unlabeled-test-data', load_content = True, shuffle = False)
-train_labels = train_data.target
+# train_labels = train_data.target
 
-count_vect = CountVectorizer(decode_error = 'ignore')
-train_counts = count_vect.fit_transform(train_data.data)
-tf_transformer = TfidfTransformer(use_idf = False)
-train_tf = tf_transformer.fit_transform(train_counts)
+# count_vect = CountVectorizer(decode_error = 'ignore')
+# train_counts = count_vect.fit_transform(train_data.data)
+# tf_transformer = TfidfTransformer(use_idf = False)
+# train_tf = tf_transformer.fit_transform(train_counts)
 
-test_counts = count_vect.transform(test_data.data)
-tf_transformer = TfidfTransformer(use_idf = False)
-test_tf = tf_transformer.fit_transform(test_counts)
+# test_counts = count_vect.transform(test_data.data)
+# tf_transformer = TfidfTransformer(use_idf = False)
+# test_tf = tf_transformer.fit_transform(test_counts)
 
 # Naive Bayes
 clfrNB = Pipeline(
@@ -47,20 +48,28 @@ clfrNB = Pipeline(
 clfrNB = clfrNB.fit(train_data.data, train_data.target)
 predictedNB = clfrNB.predict(test_data.data)
 df.Labels_NB = [train_data.target_names[i] for i in predictedNB]
+# print(df.head())
 
 # Linear SVM
-clfrSVM = svm.SVC(kernel = 'linear', C = 0.1)
-clfrSVM.fit(train_tf, train_labels)
-predictedSVM = clfrSVM.predict(test_tf)
+clfrSVM = Pipeline(
+    [
+        ('vect', CountVectorizer(decode_error = 'ignore')),
+        ('tfidf', TfidfTransformer(use_idf = False)),
+        ('clf', svm.SVC(kernel = 'linear', C = 0.1))
+    ]
+)
+clfrSVM = clfrSVM.fit(train_data.data, train_data.target)
+predictedSVM = clfrSVM.predict(test_data.data)
 df.Labels_SVM = [train_data.target_names[i] for i in predictedSVM]
 # print(df.head())
 
 # Model selection?
-gs_clf = GridSearchCV(clfrNB, parameters, n_jobs = -1)
+gs_clf = GridSearchCV(clfrNB, parameters,cv = 5, n_jobs = -1)
 gs_clf = gs_clf.fit(train_data.data, train_data.target)
-print(gs_clf.best_score_)
-# df.Labels_Models = [train_data.target_names[i] for i in predicted_labels]
+predicted_labels = gs_clf.predict(test_data.data)
+df.Labels_GSNB = [train_data.target_names[i] for i in predicted_labels]
 # print(df.head())
 
 df.to_csv('./assignment_2/predictions_NB.csv', columns = ['Filename', 'Labels_NB'], header = ['Filename', 'Label'],index = False)
 df.to_csv('./assignment_2/predictions_SVM.csv', columns = ['Filename', 'Labels_SVM'], header = ['Filename', 'Label'],index = False)
+df.to_csv('./assignment_2/predictions_GSNB.csv', columns = ['Filename', 'Labels_GSNB'], header = ['Filename', 'Label'],index = False)
