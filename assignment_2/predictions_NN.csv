@@ -78,7 +78,7 @@ Filename,Label
 1903.txt,Gastroenterology
 1904.txt,Urology
 1905.txt,Orthopedic
-1906.txt,Urology
+1906.txt,Gastroenterology
 1907.txt,Urology
 1908.txt,Neurology
 1909.txt,Orthopedic
@@ -145,7 +145,7 @@ Filename,Label
 1970.txt,Orthopedic
 1971.txt,Orthopedic
 1972.txt,Orthopedic
-1973.txt,Neurology
+1973.txt,Radiology
 1974.txt,Orthopedic
 1975.txt,Gastroenterology
 1976.txt,Orthopedic
@@ -175,9 +175,9 @@ Filename,Label
 2000.txt,Orthopedic
 2001.txt,Orthopedic
 2002.txt,Neurology
-2003.txt,Neurology
+2003.txt,Radiology
 2004.txt,Radiology
-2005.txt,Neurology
+2005.txt,Radiology
 2006.txt,Neurology
 2007.txt,Gastroenterology
 2008.txt,Neurology
@@ -275,7 +275,7 @@ Filename,Label
 2100.txt,Radiology
 2101.txt,Radiology
 2102.txt,Radiology
-2103.txt,Orthopedic
+2103.txt,Neurology
 2104.txt,Neurology
 2105.txt,Urology
 2106.txt,Orthopedic
@@ -294,7 +294,7 @@ Filename,Label
 2119.txt,Neurology
 2120.txt,Radiology
 2121.txt,Orthopedic
-2122.txt,Neurology
+2122.txt,Radiology
 2123.txt,Radiology
 2124.txt,Orthopedic
 2125.txt,Radiology
@@ -327,7 +327,7 @@ Filename,Label
 2152.txt,Gastroenterology
 2153.txt,Urology
 2154.txt,Urology
-2155.txt,Neurology
+2155.txt,Radiology
 2156.txt,Gastroenterology
 2157.txt,Urology
 2158.txt,Urology
@@ -374,7 +374,7 @@ Filename,Label
 2199.txt,Orthopedic
 2200.txt,Orthopedic
 2201.txt,Urology
-2202.txt,Neurology
+2202.txt,Orthopedic
 2203.txt,Radiology
 2204.txt,Orthopedic
 2205.txt,Radiology
