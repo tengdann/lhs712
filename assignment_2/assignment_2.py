@@ -34,7 +34,7 @@ test_data = load_files('assignment_2/dataset/unlabeled-test-data', load_content 
 # Naive Bayes
 clfrNB = Pipeline(
     [
-        ('vect', CountVectorizer(decode_error = 'ignore')),
+        ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
         ('tfidf', TfidfTransformer(use_idf = False)),
         ('clf', naive_bayes.MultinomialNB())
     ]
@@ -48,7 +48,7 @@ df.to_csv('./assignment_2/predictions_NB.csv', columns = ['Filename', 'Labels_NB
 # Linear SVM
 clfrSVM = Pipeline(
     [
-        ('vect', CountVectorizer(decode_error = 'ignore')),
+        ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
         ('tfidf', TfidfTransformer(use_idf = False)),
         ('clf', svm.SVC(kernel = 'linear', C = 0.1))
     ]
@@ -62,7 +62,7 @@ df.to_csv('./assignment_2/predictions_SVM.csv', columns = ['Filename', 'Labels_S
 # MLPClassifier
 clfrNN = Pipeline(
     [
-        ('vect', CountVectorizer(decode_error = 'ignore')),
+        ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
         ('tfidf', TfidfTransformer(use_idf = False)),
         ('clf', MLPClassifier())
     ]
@@ -75,15 +75,15 @@ df.to_csv('./assignment_2/predictions_NN.csv', columns = ['Filename', 'Labels_NN
 
 cont = str(input("Optimize NB model? [y/n]: "))
 
-if cont == 'y':
+if cont.lower() == 'y':
     # Model selection?
     params_gsnb = {
-        'vect__ngram_range': [(1, 1), (1, 2)],
+        'vect__ngram_range': [(1, 1), (1, 2), (1, 3)],
         'tfidf__use_idf': (True, False),
         'clf__alpha': (1, 1e-2, 1e-4, 1e-6, 1e-8, 1e-10),
     }
 
-    gs_clfnb = GridSearchCV(clfrNB, params_gsnb, cv = 5, n_jobs = -1)
+    gs_clfnb = GridSearchCV(clfrNB, params_gsnb, cv = 10, n_jobs = -1)
     gs_clfnb = gs_clfnb.fit(train_data.data, train_data.target)
     predictedGSNB = gs_clfnb.predict(test_data.data)
     df['Labels_GSNB'] = [train_data.target_names[i] for i in predictedGSNB]
@@ -92,7 +92,7 @@ if cont == 'y':
 
 cont = str(input("Optimize SVM model? [y/n]: "))
 
-if cont == 'y':
+if cont.lower() == 'y':
     # More model selection?
     tuned_parameters = [
         {
@@ -117,7 +117,7 @@ if cont == 'y':
             ('clf', svm.SVC())
         ]
     )
-    gs_clfsvm = GridSearchCV(gs_clfrSVM, tuned_parameters, cv = 5, n_jobs = -1)
+    gs_clfsvm = GridSearchCV(gs_clfrSVM, tuned_parameters, cv = 10, n_jobs = -1)
     gs_clfsvm = gs_clfsvm.fit(train_data.data, train_data.target)
     predictedGSSVM = gs_clfsvm.predict(test_data.data)
     df['Labels_GSSVM'] = [train_data.target_names[i] for i in predictedGSSVM]
