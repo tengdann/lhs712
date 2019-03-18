@@ -10,8 +10,8 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 
 # Create dataframe for model output
-# curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
-curdir = r'C:\Users\mrasianman3\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
+curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
+# curdir = r'C:\Users\mrasianman3\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
 files = list()
 for file in os.listdir(curdir):
     files.append(file)
@@ -154,27 +154,13 @@ if cont.lower() == 'y':
 
 cont = str(input('Optimize RFC model? [y/n]: '))
 
-if cont.lower == 'y':
+if cont.lower() == 'y':
     # Number of trees in random forest
     n_estimators = [int(x) for x in np.linspace(start = 200, stop = 2000, num = 10)]
-    # Number of features to consider at every split
-    max_features = ['auto', 'sqrt']
-    # Maximum number of levels in tree
-    max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
-    # Minimum number of samples required to split a node
-    min_samples_split = [2, 5, 10]
-    # Minimum number of samples required at each leaf node
-    min_samples_leaf = [1, 2, 4]
-    # Method of selecting samples for training each tree
-    bootstrap = [True, False]
+
     # Create the random grid
     random_grid = {
         'clf__n_estimators': n_estimators,
-        'clf__max_features': max_features,
-        'clf__max_depth': max_depth,
-        'clf__min_samples_split': min_samples_split,
-        'clf__min_samples_leaf': min_samples_leaf,
-        'clf__bootstrap': bootstrap,
         'vect__ngram_range' : [(1, 1), (1, 2)],
         'tfidf__use_idf': (True, False),
     }
@@ -182,7 +168,7 @@ if cont.lower == 'y':
         [
             ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
             ('tfidf', TfidfTransformer(use_idf = False)),
-            ('clf', RandomForestClassifier(verbose = True))
+            ('clf', RandomForestClassifier(max_features = 'sqrt', verbose = True))
         ]
     )
     gs_clfrrfc = GridSearchCV(gs_clfrrfc, random_grid, cv = 10, n_jobs = -1)
@@ -191,40 +177,3 @@ if cont.lower == 'y':
     df['Labels_GSRFC'] = [train_data.target_names[i] for i in predictedGSRFC]
     print(df.head())
     df.to_csv('./assignment_2/predictions_GSRFC.csv', columns = ['Filename', 'Labels_GSRFC'], header = ['Filename', 'Label'], index = False)
-
-# Number of trees in random forest
-n_estimators = [int(x) for x in np.linspace(start = 200, stop = 2000, num = 10)]
-# Number of features to consider at every split
-max_features = ['auto', 'sqrt']
-# Maximum number of levels in tree
-max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
-# Minimum number of samples required to split a node
-min_samples_split = [2, 5, 10]
-# Minimum number of samples required at each leaf node
-min_samples_leaf = [1, 2, 4]
-# Method of selecting samples for training each tree
-bootstrap = [True, False]
-# Create the random grid
-random_grid = {
-    'clf__n_estimators': n_estimators,
-    'clf__max_features': max_features,
-    'clf__max_depth': max_depth,
-    'clf__min_samples_split': min_samples_split,
-    'clf__min_samples_leaf': min_samples_leaf,
-    'clf__bootstrap': bootstrap,
-    'vect__ngram_range' : [(1, 1), (1, 2)],
-    'tfidf__use_idf': (True, False),
-}
-gs_clfrrfc = Pipeline(
-    [
-        ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
-        ('tfidf', TfidfTransformer(use_idf = False)),
-        ('clf', RandomForestClassifier(verbose = True))
-    ]
-)
-gs_clfrrfc = GridSearchCV(gs_clfrrfc, random_grid, cv = 10, n_jobs = -1)
-gs_clfrrfc = gs_clfrrfc.fit(train_data.data, train_data.target)
-predictedGSRFC = gs_clfrrfc.predict(test_data.data)
-df['Labels_GSRFC'] = [train_data.target_names[i] for i in predictedGSRFC]
-print(df.head())
-df.to_csv('./assignment_2/predictions_GSRFC.csv', columns = ['Filename', 'Labels_GSRFC'], header = ['Filename', 'Label'], index = False)
