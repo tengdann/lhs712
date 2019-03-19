@@ -1,4 +1,5 @@
 import os
+import itertools
 import numpy as np
 import pandas as pd
 from sklearn import naive_bayes, svm
@@ -10,8 +11,8 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 
 # Create dataframe for model output
-curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
-# curdir = r'C:\Users\mrasianman3\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
+# curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
+curdir = r'C:\Users\mrasianman3\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
 files = list()
 for file in os.listdir(curdir):
     files.append(file)
@@ -151,6 +152,32 @@ if cont.lower() == 'y':
     df['Labels_GSSVM'] = [train_data.target_names[i] for i in predictedGSSVM]
     print(df.head())
     df.to_csv('./assignment_2/predictions_GSSVM.csv', columns = ['Filename', 'Labels_GSSVM'], header = ['Filename', 'Label'], index = False)
+
+cont = str(input("Optimize NN model? [y/n]: "))
+
+if cont.lower() == 'y':
+    # More model selection?
+    tuned_parameters = [
+        {
+            'vect__ngram_range' : [(1, 1), (1, 2)],
+            'tfidf__use_idf': (True, False),
+            'clf__learning_rate': ['constant', 'invscaling', 'adaptive'],
+            'clf__activation': ['logistic', 'relu', 'identity']
+        }
+    ]
+    gs_clfrNN = Pipeline(
+        [
+            ('vect', CountVectorizer(decode_error = 'ignore')),
+            ('tfidf', TfidfTransformer(use_idf = False)),
+            ('clf', MLPClassifier())
+        ]
+    )
+    gs_clfnn = GridSearchCV(gs_clfrNN, tuned_parameters, cv = 10, n_jobs = -1)
+    gs_clfnn = gs_clfnn.fit(train_data.data, train_data.target)
+    predictedGSNN = gs_clfnn.predict(test_data.data)
+    df['Labels_GSNN'] = [train_data.target_names[i] for i in predictedGSNN]
+    print(df.head())
+    df.to_csv('./assignment_2/predictions_GSNN.csv', columns = ['Filename', 'Labels_GSNN'], header = ['Filename', 'Label'], index = False)
 
 cont = str(input('Optimize RFC model? [y/n]: '))
 
