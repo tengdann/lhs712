@@ -2,13 +2,14 @@ import os
 import itertools
 import numpy as np
 import pandas as pd
-from sklearn import naive_bayes, svm
+from sklearn import naive_bayes, svm, neural_network
 from sklearn.model_selection import GridSearchCV
 from sklearn.datasets import load_files
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
-from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
+from muffnn import MLPClassifier, MLPRegressor
 
 # Create dataframe for model output
 # curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
@@ -39,7 +40,7 @@ if cont.lower() == 'y':
     # Naive Bayes
     clfrNB = Pipeline(
         [
-            ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
+            ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode', lowercase = True)),
             ('tfidf', TfidfTransformer(use_idf = False)),
             ('clf', naive_bayes.MultinomialNB())
         ]
@@ -50,6 +51,22 @@ if cont.lower() == 'y':
     print(df.head())
     df.to_csv('./assignment_2/predictions_NB.csv', columns = ['Filename', 'Labels_NB'], header = ['Filename', 'Label'],index = False)
 
+cont = str(input('Train Logistic Regression classifier? [y/n]: '))
+
+if cont.lower() == 'y':
+    # Logistic Regressions?
+    clfrLR = Pipeline(
+        [
+            ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode', lowercase = True)),
+            ('tfidf', TfidfTransformer(use_idf = True)),
+            ('clf', LogisticRegression(class_weight = 'balanced'))
+        ]
+    )
+    clfrLR = clfrLR.fit(train_data.data, train_data.target)
+    predictedLR = clfrLR.predict(test_data.data)
+    df['Labels_LR'] = [train_data.target_names[i] for i in predictedLR]
+    print(df.head())
+    df.to_csv('./assignment_2/predictions_LR.csv', columns = ['Filename', 'Labels_LR'], header = ['Filename', 'Label'],index = False)
 
 cont = str(input('Train Linear SVM classifier? [y/n]: '))
 
@@ -75,8 +92,8 @@ if cont.lower() == 'y':
     clfrNN = Pipeline(
         [
             ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
-            ('tfidf', TfidfTransformer(use_idf = False)),
-            ('clf', MLPClassifier())
+            ('tfidf', TfidfTransformer(use_idf = True)),
+            ('clf', MLPClassifier(hidden_units = (256, )))
         ]
     )
     clfrNN = clfrNN.fit(train_data.data, train_data.target)
@@ -92,8 +109,8 @@ if cont.lower() == 'y':
     clfrRFC = Pipeline(
         [
             ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
-            ('tfidf', TfidfTransformer(use_idf = False)),
-            ('clf', RandomForestClassifier(n_estimators = 1000, n_jobs = -1, random_state = 25, verbose = 1))
+            ('tfidf', TfidfTransformer(use_idf = True)),
+            ('clf', RandomForestClassifier(n_estimators = 4000, n_jobs = -1, verbose = 1))
         ]
     )
     clfrRFC = clfrRFC.fit(train_data.data, train_data.target)
@@ -118,6 +135,24 @@ if cont.lower() == 'y':
     df['Labels_GSNB'] = [train_data.target_names[i] for i in predictedGSNB]
     print(df.head())
     df.to_csv('./assignment_2/predictions_GSNB.csv', columns = ['Filename', 'Labels_GSNB'], header = ['Filename', 'Label'], index = False)
+
+cont = str(input("Optimize LR model? [y/n]: "))
+
+if cont.lower() == 'y':
+    # Model selection?
+    params_gslr = {
+        'vect__ngram_range': [(1, 1), (1, 2), (1, 3)],
+        'tfidf__use_idf': (True, False),
+        'clf__solver': ('newton-cg', 'sag', 'saga', 'lbfgs'),
+        'clf__multi_class': ('ovr', 'multinomial')
+    }
+
+    gs_clflr = GridSearchCV(clfrLR, params_gslr, cv = 10, n_jobs = -1)
+    gs_clflr = gs_clflr.fit(train_data.data, train_data.target)
+    predictedGSLR = gs_clflr.predict(test_data.data)
+    df['Labels_GSLR'] = [train_data.target_names[i] for i in predictedGSLR]
+    print(df.head())
+    df.to_csv('./assignment_2/predictions_GSLR.csv', columns = ['Filename', 'Labels_GSLR'], header = ['Filename', 'Label'], index = False)
 
 cont = str(input("Optimize SVM model? [y/n]: "))
 
