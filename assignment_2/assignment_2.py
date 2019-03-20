@@ -9,11 +9,11 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
-from muffnn import MLPClassifier, MLPRegressor
+# from muffnn import MLPClassifier, MLPRegressor
 
 # Create dataframe for model output
-# curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
-curdir = r'C:\Users\mrasianman3\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
+curdir = r'C:\Users\dteng\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
+# curdir = r'C:\Users\mrasianman3\Desktop\lhs712\assignment_2\dataset\unlabeled-test-data\Gastroenterology'
 files = list()
 for file in os.listdir(curdir):
     files.append(file)
@@ -59,7 +59,7 @@ if cont.lower() == 'y':
         [
             ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode', lowercase = True)),
             ('tfidf', TfidfTransformer(use_idf = True)),
-            ('clf', LogisticRegression(class_weight = 'balanced'))
+            ('clf', LogisticRegression(class_weight = 'balanced', verbose = 1))
         ]
     )
     clfrLR = clfrLR.fit(train_data.data, train_data.target)
@@ -76,7 +76,7 @@ if cont.lower() == 'y':
         [
             ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
             ('tfidf', TfidfTransformer(use_idf = False)),
-            ('clf', svm.SVC(kernel = 'linear', C = 0.1))
+            ('clf', svm.LinearSVC())
         ]
     )
     clfrSVM = clfrSVM.fit(train_data.data, train_data.target)
@@ -85,22 +85,22 @@ if cont.lower() == 'y':
     print(df.head())
     df.to_csv('./assignment_2/predictions_SVM.csv', columns = ['Filename', 'Labels_SVM'], header = ['Filename', 'Label'], index = False)
 
-cont = str(input('Train Neural Network classifier? [y/n]: '))
+# cont = str(input('Train Neural Network classifier? [y/n]: '))
 
-if cont.lower() == 'y':
-    # MLPClassifier
-    clfrNN = Pipeline(
-        [
-            ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
-            ('tfidf', TfidfTransformer(use_idf = True)),
-            ('clf', MLPClassifier(hidden_units = (256, )))
-        ]
-    )
-    clfrNN = clfrNN.fit(train_data.data, train_data.target)
-    predictedNN = clfrNN.predict(test_data.data)
-    df['Labels_NN'] = [train_data.target_names[i] for i in predictedNN]
-    print(df.head())
-    df.to_csv('./assignment_2/predictions_NN.csv', columns = ['Filename', 'Labels_NN'], header = ['Filename', 'Label'], index = False)
+# if cont.lower() == 'y':
+#     # MLPClassifier
+#     clfrNN = Pipeline(
+#         [
+#             ('vect', CountVectorizer(decode_error = 'ignore', strip_accents = 'unicode')),
+#             ('tfidf', TfidfTransformer(use_idf = True)),
+#             ('clf', MLPClassifier(hidden_units = (256, )))
+#         ]
+#     )
+#     clfrNN = clfrNN.fit(train_data.data, train_data.target)
+#     predictedNN = clfrNN.predict(test_data.data)
+#     df['Labels_NN'] = [train_data.target_names[i] for i in predictedNN]
+#     print(df.head())
+#     df.to_csv('./assignment_2/predictions_NN.csv', columns = ['Filename', 'Labels_NN'], header = ['Filename', 'Label'], index = False)
 
 cont = str(input('Train Random Forest classifier? [y/n]: '))
 
@@ -144,7 +144,8 @@ if cont.lower() == 'y':
         'vect__ngram_range': [(1, 1), (1, 2), (1, 3)],
         'tfidf__use_idf': (True, False),
         'clf__solver': ('newton-cg', 'sag', 'saga', 'lbfgs'),
-        'clf__multi_class': ('ovr', 'multinomial')
+        'clf__multi_class': ('ovr', 'multinomial'),
+        'clf__C': (1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1)
     }
 
     gs_clflr = GridSearchCV(clfrLR, params_gslr, cv = 10, n_jobs = -1)
@@ -162,23 +163,17 @@ if cont.lower() == 'y':
         {
             'vect__ngram_range' : [(1, 1), (1, 2)],
             'tfidf__use_idf': (True, False),
-            'clf__kernel': ['rbf'],
-            'clf__gamma': [1e-3, 1e-4, 1e-2, 0.1, 1],
-            'clf__C': [0.001, 0.01, 0.1, 1]
+            'clf__C': [0.001, 0.01, 0.1, 1],
+            'clf__loss': ('hinge', 'squared_hinge'),
+            'clf__class_weight': ['balanced'],
+            'clf__max_iter': (2000, 3000, 4000)
         },
-        {
-            'vect__ngram_range' : [(1, 1), (1, 2)],
-            'tfidf__use_idf': (True, False),
-            'clf__kernel': ['linear'],
-            'clf__gamma': [1e-3, 1e-4, 1e-2, 0.1, 1],
-            'clf__C': [0.001, 0.01, 0.1, 1]
-        }
     ]
     gs_clfrSVM = Pipeline(
         [
             ('vect', CountVectorizer(decode_error = 'ignore')),
             ('tfidf', TfidfTransformer(use_idf = False)),
-            ('clf', svm.SVC())
+            ('clf', svm.LinearSVC(verbose = 1))
         ]
     )
     gs_clfsvm = GridSearchCV(gs_clfrSVM, tuned_parameters, cv = 10, n_jobs = -1)
@@ -188,31 +183,31 @@ if cont.lower() == 'y':
     print(df.head())
     df.to_csv('./assignment_2/predictions_GSSVM.csv', columns = ['Filename', 'Labels_GSSVM'], header = ['Filename', 'Label'], index = False)
 
-cont = str(input("Optimize NN model? [y/n]: "))
+# cont = str(input("Optimize NN model? [y/n]: "))
 
-if cont.lower() == 'y':
-    # More model selection?
-    tuned_parameters = [
-        {
-            'vect__ngram_range' : [(1, 1), (1, 2)],
-            'tfidf__use_idf': (True, False),
-            'clf__learning_rate': ['constant', 'invscaling', 'adaptive'],
-            'clf__activation': ['logistic', 'relu', 'identity']
-        }
-    ]
-    gs_clfrNN = Pipeline(
-        [
-            ('vect', CountVectorizer(decode_error = 'ignore')),
-            ('tfidf', TfidfTransformer(use_idf = False)),
-            ('clf', MLPClassifier())
-        ]
-    )
-    gs_clfnn = GridSearchCV(gs_clfrNN, tuned_parameters, cv = 10, n_jobs = -1)
-    gs_clfnn = gs_clfnn.fit(train_data.data, train_data.target)
-    predictedGSNN = gs_clfnn.predict(test_data.data)
-    df['Labels_GSNN'] = [train_data.target_names[i] for i in predictedGSNN]
-    print(df.head())
-    df.to_csv('./assignment_2/predictions_GSNN.csv', columns = ['Filename', 'Labels_GSNN'], header = ['Filename', 'Label'], index = False)
+# if cont.lower() == 'y':
+#     # More model selection?
+#     tuned_parameters = [
+#         {
+#             'vect__ngram_range' : [(1, 1), (1, 2)],
+#             'tfidf__use_idf': (True, False),
+#             'clf__learning_rate': ['constant', 'invscaling', 'adaptive'],
+#             'clf__activation': ['logistic', 'relu', 'identity']
+#         }
+#     ]
+#     gs_clfrNN = Pipeline(
+#         [
+#             ('vect', CountVectorizer(decode_error = 'ignore')),
+#             ('tfidf', TfidfTransformer(use_idf = False)),
+#             ('clf', MLPClassifier())
+#         ]
+#     )
+#     gs_clfnn = GridSearchCV(gs_clfrNN, tuned_parameters, cv = 10, n_jobs = -1)
+#     gs_clfnn = gs_clfnn.fit(train_data.data, train_data.target)
+#     predictedGSNN = gs_clfnn.predict(test_data.data)
+#     df['Labels_GSNN'] = [train_data.target_names[i] for i in predictedGSNN]
+#     print(df.head())
+#     df.to_csv('./assignment_2/predictions_GSNN.csv', columns = ['Filename', 'Labels_GSNN'], header = ['Filename', 'Label'], index = False)
 
 cont = str(input('Optimize RFC model? [y/n]: '))
 
